@@ -6,7 +6,9 @@ import pandas as pd
 
 
 def run_rss_reader():
-
+    """
+    Main funciton
+    """
     __version__ = "0.0.3"
     STORAGE="rss_storage.h5"
 
