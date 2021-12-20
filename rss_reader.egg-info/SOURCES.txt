@@ -8,3 +8,4 @@ rss_reader.egg-info/dependency_links.txt
 rss_reader.egg-info/entry_points.txt
 rss_reader.egg-info/requires.txt
 rss_reader.egg-info/top_level.txt
+test/test_rss_reader.py
