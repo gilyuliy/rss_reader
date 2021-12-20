@@ -8,7 +8,7 @@ setup(
     author_email='',
     url='',
     packages=find_packages(),
-    scripts = ['package/rss_reader.py'],
+    scripts=['package/rss_reader.py'],
     entry_points={
         'console_scripts': [
             'rss_reader=package.rss_reader:run_rss_reader'

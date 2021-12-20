@@ -17,7 +17,8 @@ class WholeTestCase(unittest.TestCase):
         self.assertIn(teststr, str(output))
 
     def test_yahoo_rss_full(self):
-        result = subprocess.run(['python', 'package/rss_reader.py', 'https://www.yahoo.com/news/rss'], stdout=subprocess.PIPE)
+        result = subprocess.run(['python', 'package/rss_reader.py', 'https://www.yahoo.com/news/rss'],
+                               stdout=subprocess.PIPE)
         output = result.stdout
         teststr = "Title: "
         self.assertIn(teststr, str(output))
