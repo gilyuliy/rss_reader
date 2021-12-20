@@ -1,0 +1,10 @@
+pyproject.toml
+setup.cfg
+setup.py
+package/rss_reader.py
+rss_reader.egg-info/PKG-INFO
+rss_reader.egg-info/SOURCES.txt
+rss_reader.egg-info/dependency_links.txt
+rss_reader.egg-info/entry_points.txt
+rss_reader.egg-info/requires.txt
+rss_reader.egg-info/top_level.txt
