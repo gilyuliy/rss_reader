@@ -4,7 +4,7 @@ import sys
 import logging
 import pandas as pd
 
-__version__="0.0.2"
+__version__ = "0.0.3"
 
 parser = argparse.ArgumentParser(description='Pure Python command-line RSS reader by gilyuliy')
 parser.add_argument("source", type=str, help="URL of RSS source")
@@ -17,29 +17,31 @@ parser.add_argument('--verbose', action='store_true', help="Outputs verbose stat
 args = parser.parse_args()
 
 if args.verbose:
-    logging.basicConfig(format='%(asctime)s [%(levelname)s] %(message)s ', datefmt='%d-%b-%y %H:%M:%S', level=logging.DEBUG)
+    logging.basicConfig(format='%(asctime)s [%(levelname)s] %(message)s ',
+                        datefmt='%d-%b-%y %H:%M:%S', level=logging.DEBUG)
 else:
-    logging.basicConfig(format='%(asctime)s [%(levelname)s] %(message)s ', datefmt='%d-%b-%y %H:%M:%S', level=logging.INFO)
+    logging.basicConfig(format='%(asctime)s [%(levelname)s] %(message)s ',
+                        datefmt='%d-%b-%y %H:%M:%S', level=logging.INFO)
 
 
 logging.debug("Program started")
 
-source=args.source
-logging.debug("Parsing RSS: " +source)
+source = args.source
+logging.debug("Parsing RSS: " + source)
 
 feed = feedparser.parse(source)
 entry = feed.entries[1]
 
 if args.limit:
-    limit=args.limit
+    limit = args.limit
 else:
-    limit=int(sys.maxsize)
-logging.debug("Limit is "+str(limit))
+    limit = int(sys.maxsize)
+logging.debug("Limit is " + str(limit))
 
-posts=[]
+posts = []
 for index, key in zip(range(limit), entry.keys()):
-    posts.append((entry.title,entry.published,entry.link))
-logging.debug("Data: "+str(posts))
+    posts.append((entry.title, entry.published, entry.link))
+logging.debug("Data: " + str(posts))
 logging.debug("Converting to DataFrame for future better processing")
 df = pd.DataFrame(posts, columns=['title', 'published', 'link'])
 logging.debug(df)
@@ -47,7 +49,7 @@ logging.debug(df)
 if args.json:
     logging.debug("Output is JSON")
     output = df.to_json(orient="split")
-    print (output)
+    print(output)
 else:
     logging.debug("Output is plaintext")
     print("\r\n")
