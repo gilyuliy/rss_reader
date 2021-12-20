@@ -8,6 +8,7 @@ import pandas as pd
 def run_rss_reader():
 
     __version__ = "0.0.3"
+    STORAGE="rss_storage.h5"
 
     parser = argparse.ArgumentParser(description='Pure Python command-line RSS reader by gilyuliy')
     parser.add_argument("source", type=str, help="URL of RSS source")
@@ -33,7 +34,7 @@ def run_rss_reader():
     logging.debug("Parsing RSS: " + source)
 
     feed = feedparser.parse(source)
-    entry = feed.entries[1]
+    #entry = feed.entries[1]
 
     if args.limit:
         limit = args.limit
@@ -42,11 +43,15 @@ def run_rss_reader():
     logging.debug("Limit is " + str(limit))
 
     posts = []
-    for index, key in zip(range(limit), entry.keys()):
+    for index, key in zip(range(limit), feed.entries):
+        entry=feed.entries[index]
         posts.append((entry.title, entry.published, entry.link))
     logging.debug("Data: " + str(posts))
     logging.debug("Converting to DataFrame for future better processing")
     df = pd.DataFrame(posts, columns=['title', 'published', 'link'])
+    df.to_pickle(STORAGE)
+    logging.debug(df)
+    df = pd.read_pickle(STORAGE)
     logging.debug(df)
 
     if args.json:
