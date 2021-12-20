@@ -1,0 +1,3 @@
+[console_scripts]
+my-application = mypackage.mymodule:run_rss_reader
+
