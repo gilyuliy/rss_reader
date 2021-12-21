@@ -13,7 +13,7 @@ python rss_reader.py https://www.yahoo.com/news/rss
 ```
 
 ###### Usage doc:
-
+````
 rss_reader.py [-h] [--limit LIMIT] [--version] [--json] [--verbose] source
 
 positional arguments:
@@ -29,15 +29,15 @@ optional arguments:
   --date DATE      Date in Ymd format to read cache
   --to-pdf TO_PDF  Path where to export PDF
   --to-html TO_HTML  Path where to export HTML
-  
+````  
 Run unit tests:
 ```
-python -m unittest test_rss_reader.WholeTestCase
+python -m unittest test\test_rss_reader.WholeTestCase
 ```
 Good output should be as
 ```
 C:\python3\rss_reader\test>python -m unittest test_rss_reader.WholeTestCase
-Ran 4 tests in 3.082s
+Ran 8 tests in 9.082s
 OK
 ```
 
@@ -74,6 +74,7 @@ Successfully installed rss-reader-0.0.4
 rss_reader -h
 ```
 8. Output should be same as in python script:
+````
 rss_reader [-h] [--limit LIMIT] [--version] [--json] [--verbose] source
 
 Pure Python command-line RSS reader by gilyuliy
@@ -88,7 +89,7 @@ optional arguments:
   --json         Print result as JSON in stdout
   --verbose      Outputs verbose status message
   --date DATE    Date in Ymd format to read cache
-
+````
 ## [Iteration 3]
 Utility does caching in file rss_storage.h5
 Format of storage is described at hdfgroup.org
@@ -117,4 +118,8 @@ utility stores all data, including images to DataFrame H5 storage,
 so when used later with --date YYYMMDD, --to-pdf can be created offline
 
 with --to-html utility will export data to html
-this also works with all possible combinations of keys aboe
+```
+python rss_reader.py https://news.yahoo.com/rss --to-html .
+```
+
+This also works with all possible combinations of keys above.
