@@ -39,7 +39,7 @@ optional arguments:
 Run unit tests:
 ```
 python -m unittest test\test_rss_reader.WholeTestCase
-
+```
 Good output should be as
 ```
 C:\python3\rss_reader\test>python -m unittest test_rss_reader.WholeTestCase
