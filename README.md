@@ -13,27 +13,31 @@ python rss_reader.py https://www.yahoo.com/news/rss
 ```
 
 ###### Usage doc:
-````
-rss_reader.py [-h] [--limit LIMIT] [--version] [--json] [--verbose] source
+```
+rss_reader.py [-h] [--limit LIMIT] [--version] [--json] [--verbose] [--date DATE] [--to-pdf TO_PDF]
+                     [--to-html TO_HTML]
+                     [source ...]
+
+Pure Python command-line RSS reader by gilyuliy
 
 positional arguments:
-  source         URL of RSS source
+  source             URL of RSS source
 
 optional arguments:
-  optional arguments:
-  -h, --help       show this help message and exit
-  --limit LIMIT    Limit news topics if this parameter provided
-  --version        Print version info
-  --json           Print result as JSON in stdout
-  --verbose        Outputs verbose status message
-  --date DATE      Date in Ymd format to read cache
-  --to-pdf TO_PDF  Path where to export PDF
+  -h, --help         show this help message and exit
+  --limit LIMIT      Limit news topics if this parameter provided
+  --version          Print version info
+  --json             Print result as JSON in stdout
+  --verbose          Outputs verbose status message
+  --date DATE        Date in Ymd format to read cache
+  --to-pdf TO_PDF    Path where to export PDF
   --to-html TO_HTML  Path where to export HTML
-````  
+  
+```
 Run unit tests:
 ```
 python -m unittest test\test_rss_reader.WholeTestCase
-```
+
 Good output should be as
 ```
 C:\python3\rss_reader\test>python -m unittest test_rss_reader.WholeTestCase
