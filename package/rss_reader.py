@@ -29,6 +29,9 @@ def dftoPDF(df, path):
         row["link"] = row["link"].encode('latin-1', 'replace').decode('latin-1')
         pdf.multi_cell(effective_page_width, 0.5, "Link: "+row["link"])
         pdf.ln(0.5)
+        row["published"] = row["published"].encode('latin-1', 'replace').decode('latin-1')
+        pdf.multi_cell(effective_page_width, 0.5, "Date: "+row["published"])
+        pdf.ln(0.5)
         row["mediaLink"] = row["mediaLink"].encode('latin-1', 'replace').decode('latin-1')
         pdf.multi_cell(effective_page_width, 0.5, "MediaLink: "+row["mediaLink"])
         pdf.ln(0.5)
@@ -47,11 +50,39 @@ def dftoPDF(df, path):
     return True
 
 
+def dftoHTML(df, path):
+    '''
+    Creates HTML from Dataframe and saves as file in specified path
+    '''
+    data = "<html><body>"
+    for index, row in df.iterrows():
+        row["title"] = row["title"].encode('latin-1', 'replace').decode('latin-1')
+        row["link"] = row["link"].encode('latin-1', 'replace').decode('latin-1')
+        row["mediaLink"] = row["mediaLink"].encode('latin-1', 'replace').decode('latin-1')
+        row["published"] = row["published"].encode('latin-1', 'replace').decode('latin-1')
+        data = data+row["title"]
+        data = data+"<br>"
+        data = data+row["link"]
+        data = data+"<br>"
+        data = data+"<a href=\""+row["mediaLink"]+"\">Image</a>"
+        data = data+"<br>"
+        data = data+row["published"]
+        data = data+"<hr>\r\n"
+    data = data+"</body></html>"
+    fullPath = os.path.join(path, time.strftime("%Y%m%d-%H%M%S")+".html")
+    logging.debug("Exporing HTML as: "+fullPath)
+    f = open(fullPath, "w")
+    f.write(data)
+    f.close()
+
+    return True
+
+
 def run_rss_reader():
     """
     Main funciton
     """
-    __version__ = "0.0.6"
+    __version__ = "0.0.7"
     STORAGE = "rss_storage.h5"
 
     parser = argparse.ArgumentParser(description='Pure Python command-line RSS reader by gilyuliy')
@@ -63,6 +94,7 @@ def run_rss_reader():
     parser.add_argument('--verbose', action='store_true', help="Outputs verbose status message")
     parser.add_argument("--date", type=int, help='Date in Ymd format to read cache')
     parser.add_argument("--to-pdf", type=str, help='Path where to export PDF')
+    parser.add_argument("--to-html", type=str, help='Path where to export HTML')
 
     args = parser.parse_args()
 
@@ -127,6 +159,10 @@ def run_rss_reader():
     if args.to_pdf:
         logging.debug("Creating PDF at "+str(args.to_pdf))
         dftoPDF(df, str(args.to_pdf))
+
+    if args.to_html:
+        logging.debug("Creating HTML at "+str(args.to_html))
+        dftoHTML(df, str(args.to_html))
 
     if args.json:
         logging.debug("Output is JSON")

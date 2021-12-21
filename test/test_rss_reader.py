@@ -84,6 +84,18 @@ class WholeTestCase(unittest.TestCase):
         df = pd.DataFrame(data)
         self.assertTrue(rss_reader.dftoPDF(df, '.'))
 
+    def test_dftoHTML(self):
+        """
+        Test for converting HTML function only
+        """
+        data = {'title': ['Title1', 'Title2'],
+                'published': ['2021-12-19T16:29:42Z', '2021-12-19T16:29:43Z'],
+                'link': ['http://localhost', 'http://localhost2'],
+                'mediaLink': ['', ''],
+                'mediaContent': ['', '']}
+        df = pd.DataFrame(data)
+        self.assertTrue(rss_reader.dftoHTML(df, '.'))
+
 
 if __name__ == "__main__":
     unittest.main()
