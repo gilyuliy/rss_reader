@@ -1,9 +1,11 @@
 # rss_reader
 
-Pure python rss reader
+Python rss reader
 ## [Iteration 1]
 
 Installation: per requirements.txt
+main script is rss_reader.py located in package/ folder.
+Actually, it's the only thing you need+requirements, if you don't package the solution.
 ```
 python -m pip install argparse build fpdf feedparser logging pandas scikit-image
 ```
