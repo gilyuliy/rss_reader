@@ -1,29 +1,68 @@
 import argparse
 import dateutil.parser as dateparser
+from fpdf import FPDF
 import feedparser
 import logging
+import os
 import pandas as pd
+import random
 import re
+from skimage import io
 import sys
+import time
+
+
+def dftoPDF(df, path):
+    '''
+    Creates pdf from Dataframe and saves as file in specified path
+    '''
+    pdf = FPDF(format='a4', unit='cm')
+    pdf.add_page()
+    pdf.set_font("Arial", size=10)
+    effective_page_width = pdf.w-2*pdf.l_margin
+    for index, row in df.iterrows():
+        row["title"] = row["title"].encode('latin-1', 'replace').decode('latin-1')
+        pdf.multi_cell(effective_page_width, 0.5, "Title: "+row["title"])
+        pdf.ln(0.5)
+        pdf.multi_cell(effective_page_width, 0.5, "Date: "+row["published"])
+        pdf.ln(0.5)
+        row["link"] = row["link"].encode('latin-1', 'replace').decode('latin-1')
+        pdf.multi_cell(effective_page_width, 0.5, "Link: "+row["link"])
+        pdf.ln(0.5)
+        row["mediaLink"] = row["mediaLink"].encode('latin-1', 'replace').decode('latin-1')
+        pdf.multi_cell(effective_page_width, 0.5, "MediaLink: "+row["mediaLink"])
+        pdf.ln(0.5)
+        image = row["mediaContent"]
+        if str(image) != '':
+            tempfilename = str(random.randint(1, 1000000000000))+".jpg"
+            logging.debug("Export DF array to temp image as: "+tempfilename)
+            io.imsave(tempfilename, image)
+            pdf.image(tempfilename, w=effective_page_width)
+            os.remove(tempfilename)
+            pdf.ln(1)
+
+    fullPath = os.path.join(path, time.strftime("%Y%m%d-%H%M%S")+".pdf")
+    logging.debug("Exporing PDF as: "+fullPath)
+    pdf.output(fullPath)
+    return True
 
 
 def run_rss_reader():
     """
     Main funciton
     """
-    __version__ = "0.0.5"
+    __version__ = "0.0.6"
     STORAGE = "rss_storage.h5"
 
     parser = argparse.ArgumentParser(description='Pure Python command-line RSS reader by gilyuliy')
     parser.add_argument("source", type=str, help="URL of RSS source", nargs='*')
-#    parser.add_argument("source", type=str, help="URL of RSS source")
     parser.add_argument("--limit", type=int,
                         help="Limit news topics if this parameter provided")
     parser.add_argument('--version', action='version', version='%(prog)s '+__version__, help="Print version info")
     parser.add_argument('--json', action='store_true', help="Print result as JSON in stdout")
     parser.add_argument('--verbose', action='store_true', help="Outputs verbose status message")
-    parser.add_argument("--date", type=int,
-                        help='Date in Ymd format to read cache')
+    parser.add_argument("--date", type=int, help='Date in Ymd format to read cache')
+    parser.add_argument("--to-pdf", type=str, help='Path where to export PDF')
 
     args = parser.parse_args()
 
@@ -45,19 +84,26 @@ def run_rss_reader():
     if args.source:
         logging.debug("Source specified, online mode")
         source = str(args.source[0])
-        print(source)
         logging.debug("Parsing RSS: " + str(source))
         feed = feedparser.parse(source)
         posts = []
         for index, key in zip(range(limit), feed.entries):
             entry = feed.entries[index]
+            if 'media_content' in entry:
+                mediaLink = entry.media_content[0]['url']
+                mediaContent = io.imread(entry.media_content[0]['url'])
+                logging.debug("Found media at url: "+str(mediaLink))
+            else:
+                mediaContent = ""
+                mediaLink = ""
+
             posts.append((entry.title, entry.published, entry.link,
-                          (dateparser.parse(entry.published)).strftime('%Y%m%d')))
-        logging.debug("Data: " + str(posts))
+                          (dateparser.parse(entry.published)).strftime('%Y%m%d'), mediaLink, mediaContent))
+
         logging.debug("Converting to DataFrame for future better processing")
-        df = pd.DataFrame(posts, columns=['title', 'published', 'link', 'published_Ymd'])
+        df = pd.DataFrame(posts, columns=['title', 'published', 'link', 'published_Ymd', 'mediaLink', 'mediaContent'])
         df.to_pickle(STORAGE)
-        logging.debug(df)
+        logging.debug("Shape of DataFrame: "+str(df.shape))
     else:
         logging.debug("Source NOT specified, OFFLINE mode")
         if args.date:
@@ -73,20 +119,26 @@ def run_rss_reader():
             if df.shape[0] == 0:
                 logging.error("No news found for date "+argsdate)
                 sys.exit(-1)
-            logging.debug(df)
+            logging.debug("Shape of DataFrame: "+str(df.shape))
         else:
             print("--date in %Y%m%d format is required if source is not specificed")
             sys.exit(-1)
 
+    if args.to_pdf:
+        logging.debug("Creating PDF at "+str(args.to_pdf))
+        dftoPDF(df, str(args.to_pdf))
+
     if args.json:
         logging.debug("Output is JSON")
-        output = df.to_json(orient="split")
+        df_forjson = df[['title', 'published', 'link', 'published_Ymd', 'mediaLink']]
+        output = df_forjson.to_json(orient="split")
         print(output)
     else:
         logging.debug("Output is plaintext")
         print("\r\n")
         for index, row in df.iterrows():
-            print("Title: "+row['title']+"\r\n"+"Date: "+row['published']+"\r\n"+"Link: "+row['link']+"\r\n")
+            print("Title: "+row['title']+"\r\n"+"Date: "+row['published']+"\r\n"+"Link: "+row['link']+"\r\n" +
+                  "Media: "+row['mediaLink']+"\r\n")
 
 
 if __name__ == "__main__":

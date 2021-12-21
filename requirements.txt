@@ -1,1 +1,1 @@
-python -m pip install argparse feedparser logging pandas
+python -m pip install argparse build fpdf feedparser logging pandas scikit-image

@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='rss_reader',
-    version='0.0.5',
+    version='0.0.6',
     license='',
     author='gilyuliiy',
     author_email='',
@@ -17,8 +17,10 @@ setup(
     install_requires=[
         'requests',
         'feedparser',
+        'fpdf',
         'argparse',
-        'pandas'
+        'pandas',
+        'scikit-image'
     ],
     description="Yet another Pytohn RSS Readyer by gilyuliiy",
 )

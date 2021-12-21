@@ -1,4 +1,6 @@
 requests
 feedparser
+fpdf
 argparse
 pandas
+scikit-image

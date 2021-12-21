@@ -1,7 +1,14 @@
-import datetime
 import os
-import subprocess
-import unittest
+import sys
+modpath = '../package/'
+sys.path.insert(0, modpath)
+
+if True:
+    import datetime
+    import pandas as pd
+    import rss_reader
+    import subprocess
+    import unittest
 
 yesterday = (datetime.date.today() - datetime.timedelta(days=1)).strftime('%Y%m%d')
 
@@ -29,9 +36,9 @@ class WholeTestCase(unittest.TestCase):
         """
         Test for regular use
         """
-        result = subprocess.run(['python', '../package/rss_reader.py', 'https://www.yahoo.com/news/rss'],
-                                stdout=subprocess.PIPE)
-        output = result.stdout
+        result = subprocess.run(['python', '../package/rss_reader.py', 'https://www.yahoo.com/news/rss',
+                                '--limit', '2'], stdout=subprocess.PIPE)
+        output = result.stdout.decode()
         teststr = "Title: "
         self.assertIn(teststr, str(output))
 
@@ -39,10 +46,10 @@ class WholeTestCase(unittest.TestCase):
         """
         Test for using --json output
         """
-        result = subprocess.run(['python', '../package/rss_reader.py', 'https://www.yahoo.com/news/rss', '--json'],
-                                stdout=subprocess.PIPE)
+        result = subprocess.run(['python', '../package/rss_reader.py', 'https://www.yahoo.com/news/rss', '--json',
+                                '--limit', '2'], stdout=subprocess.PIPE)
         output = result.stdout
-        teststr = '{"columns":["title","published","link","published_Ymd"]'
+        teststr = '{"columns":["title","published","link","published_Ymd"'
         self.assertIn(teststr, str(output))
 
     def test_yahoo_rss_full_json_yesterday(self):
@@ -50,10 +57,32 @@ class WholeTestCase(unittest.TestCase):
         Test for using --date
         """
         result = subprocess.run(['python', '../package/rss_reader.py', 'https://www.yahoo.com/news/rss', '--json',
-                                 '--date', yesterday], stdout=subprocess.PIPE)
-        output = result.stdout
-        teststr = '{"columns":["title","published","link","published_Ymd"]'
+                                 '--date', yesterday, '--limit', '2'], stdout=subprocess.PIPE)
+        output = result.stdout.decode()
+        teststr = '{"columns":["title","published","link","published_Ymd"'
         self.assertIn(teststr, str(output))
+
+    def test_yahoo_rss_full_pdf(self):
+        """
+        Test for using pdf in command line
+        """
+        result = subprocess.run(['python', '../package/rss_reader.py', 'https://www.yahoo.com/news/rss', '--to-pdf',
+                                 '.', '--limit', '2'], stdout=subprocess.PIPE)
+        output = result.stdout.decode()
+        teststr = 'Title:'
+        self.assertIn(teststr, str(output))
+
+    def test_dftoPDF(self):
+        """
+        Test for converting PDF function only
+        """
+        data = {'title': ['Title1', 'Title2'],
+                'published': ['2021-12-19T16:29:42Z', '2021-12-19T16:29:43Z'],
+                'link': ['http://localhost', 'http://localhost2'],
+                'mediaLink': ['', ''],
+                'mediaContent': ['', '']}
+        df = pd.DataFrame(data)
+        self.assertTrue(rss_reader.dftoPDF(df, '.'))
 
 
 if __name__ == "__main__":
