@@ -5,7 +5,7 @@ Pure python rss reader
 
 Installation: per requirements.txt
 ```
-python -m pip install argparse feedparser logging pandas
+python -m pip install argparse build fpdf feedparser logging pandas scikit-image
 ```
 ###### Most common usage example:
 ```
@@ -20,11 +20,14 @@ positional arguments:
   source         URL of RSS source
 
 optional arguments:
-  -h, --help     show this help message and exit
-  --limit LIMIT  Limit news topics if this parameter provided
-  --version      Print version info
-  --json         Print result as JSON in stdout
-  --verbose      Outputs verbose status message
+  optional arguments:
+  -h, --help       show this help message and exit
+  --limit LIMIT    Limit news topics if this parameter provided
+  --version        Print version info
+  --json           Print result as JSON in stdout
+  --verbose        Outputs verbose status message
+  --date DATE      Date in Ymd format to read cache
+  --to-pdf TO_PDF  Path where to export PDF
   
 Run unit tests:
 ```
@@ -92,6 +95,21 @@ Basically, we store DataFrame with following columns
 - published
 - link
 - published_Ymd
+- mediaLink
+- mediaContent
 
 This is used for offline access when called with --date key
 --date key can work with any other keys above
+
+## [Iteration 4]
+Utility is able to export data with images to PDF
+To use that add --to-pdf path, for example:
+```
+python rss_reader.py https://news.yahoo.com/rss --to-pdf .
+```
+Utility accepts and understands all keys above and 
+any combinations of them
+
+When executed with source positional argument source,
+utility stores all data, including images to DataFrame H5 storage,
+so when used later with --date YYYMMDD, --to-pdf can be created offline
