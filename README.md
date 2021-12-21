@@ -28,6 +28,7 @@ optional arguments:
   --verbose        Outputs verbose status message
   --date DATE      Date in Ymd format to read cache
   --to-pdf TO_PDF  Path where to export PDF
+  --to-html TO_HTML  Path where to export HTML
   
 Run unit tests:
 ```
@@ -51,6 +52,7 @@ Good output should now have any output
 ###### Packaging:
 1. Execute
 ```
+python -m pip install build
 python -m build
 ```
 Output should be 
@@ -113,3 +115,6 @@ any combinations of them
 When executed with source positional argument source,
 utility stores all data, including images to DataFrame H5 storage,
 so when used later with --date YYYMMDD, --to-pdf can be created offline
+
+with --to-html utility will export data to html
+this also works with all possible combinations of keys aboe
